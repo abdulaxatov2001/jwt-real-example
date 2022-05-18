@@ -11,31 +11,29 @@ import java.util.Set;
 @Component
 public class JwtProvider {
 
-    private final long expireTime = 1000*60*60*24;
-    private final String secretKey = "mirzabek";
+    private final long expireTime = 1000 * 86400 * 30;
+    private final String secretKey = "heyMasterSuperKey";
 
-    public String generateToken(String username, Set<Role> roles){
+    public String generateToken(String username) {
         String token = Jwts
                 .builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expireTime))
-                .claim("roles", roles)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
         return token;
     }
 
-    public String getUsernameFromToken(String token){
+    public String getUsernameFromToken(String token) {
         try {
-
             return Jwts
                     .parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

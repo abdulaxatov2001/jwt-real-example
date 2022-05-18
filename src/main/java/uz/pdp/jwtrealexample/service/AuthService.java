@@ -1,5 +1,6 @@
 package uz.pdp.jwtrealexample.service;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,7 +24,6 @@ import uz.pdp.jwtrealexample.security.JwtProvider;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AuthService  implements UserDetailsService {
@@ -31,6 +31,8 @@ public class AuthService  implements UserDetailsService {
     private final  UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+
 
     private final RoleRepository roleRepository;
 
@@ -54,16 +56,13 @@ public class AuthService  implements UserDetailsService {
 
     public ApiResponse register(RegisterDto registerDto) {
 
-        boolean existsByEmail = userRepository.existsByEmail(registerDto.getEmail());
+        boolean existsByEmail = userRepository.existsByPhoneNumber(registerDto.getPhoneNumber());
         if (existsByEmail) {
-            return new ApiResponse("This email already exist",false);
+            return new ApiResponse("This user already exist",false);
         }
         User user = new User();
 
-        user.setFirstName(registerDto.getFirstName());
-        user.setLastName(registerDto.getLastName());
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setPhoneNumber(registerDto.getPhoneNumber());
         user.setRoles(Collections.singleton(roleRepository.findByRoleName(RoleName.ROLE_USER)));
 
         userRepository.save(user);
@@ -88,7 +87,7 @@ public class AuthService  implements UserDetailsService {
     }
 
     public ApiResponse verifyEmail( String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByPhoneNumber(email);
         if (optionalUser.isEmpty()) {
             return new ApiResponse("Error",false);
         }
@@ -99,11 +98,15 @@ public class AuthService  implements UserDetailsService {
     }
 
     public ApiResponse login(LoginDto loginDto) {
+
         try {
-            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
-                    (loginDto.getUsername(), loginDto.getPassword()));
+            if (userRepository.findByPhoneNumber(loginDto.getPhoneNumber()).isEmpty())
+                return new ApiResponse("yoq token",false);
+                Authentication authenticate = authenticationManager.
+                    authenticate(new UsernamePasswordAuthenticationToken
+                    (loginDto.getPhoneNumber(), loginDto.getPassword()));
             User user = (User) authenticate.getPrincipal();
-            String token = jwtProvider.generateToken(loginDto.getUsername(), user.getRoles());
+            String token = jwtProvider.generateToken(loginDto.getPhoneNumber());
             return new ApiResponse("Mana token",true,token);
         }catch (BadCredentialsException badCredentialsException){
             return new ApiResponse("Username or password is wrong",false);
@@ -116,7 +119,8 @@ public class AuthService  implements UserDetailsService {
         if (optionalUser.isPresent()) {
             return optionalUser.get();
         }throw new UsernameNotFoundException(username+" not found");*/
-        return userRepository.findByEmail(username).orElseThrow(() ->
+        return userRepository.findByPhoneNumber(username).orElseThrow(() ->
                 new UsernameNotFoundException(username+" not found"));
     }
+
 }

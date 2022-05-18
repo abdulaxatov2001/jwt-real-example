@@ -7,22 +7,16 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Random;
 
 @Data
 public class RegisterDto {
-    @NotNull
-    @Size(min = 3,max = 50)
-    private String firstName;
-
-    @NotNull
-    @Length(min = 3,max = 50)
-    private String lastName;
 
 
     @NotNull
-    private String email;
+    private  String phoneNumber;
 
-    @NotNull
-    private String password;
+    private String username;
+
 
 }

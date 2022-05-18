@@ -21,20 +21,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; //primary key
-
-    @Column(nullable = false,length = 50)
-    private String firstName;//ismi
-
-
-    @Column(nullable = false,length = 50)
-    private String lastName;//familiya
-
-
     @Column(unique = true,nullable = false)
-    private String email;//example@gmail.com
+    private String phoneNumber;//example@gmail.com
 
-    @Column(nullable = false)
-    private String password;//userning paroli
+    private String fullName;
+    private String  generatePassword;
 
     @Column(nullable = false,updatable = false)
 
@@ -64,8 +55,13 @@ public class User implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return this.generatePassword;
+    }
+
+    @Override
     public String getUsername() {
-        return this.email;
+        return this.phoneNumber;
     }
 
     @Override

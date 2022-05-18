@@ -1,7 +1,6 @@
 package uz.pdp.jwtrealexample.config;
 
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,6 +22,7 @@ import java.util.Properties;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
 
     private final AuthService authService;
 
@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/register").permitAll()
-                .antMatchers("/api/auth/verifyEmail","/api/auth/*").permitAll()
+                .antMatchers("/api/auth/verifyEmail","/api/password","/api/auth/*").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -72,5 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         return mailSender;
     }
+
 
 }
