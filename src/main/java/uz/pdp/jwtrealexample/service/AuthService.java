@@ -24,6 +24,7 @@ import uz.pdp.jwtrealexample.security.JwtProvider;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AuthService  implements UserDetailsService {
@@ -61,7 +62,6 @@ public class AuthService  implements UserDetailsService {
             return new ApiResponse("This user already exist",false);
         }
         User user = new User();
-
         user.setPhoneNumber(registerDto.getPhoneNumber());
         user.setRoles(Collections.singleton(roleRepository.findByRoleName(RoleName.ROLE_USER)));
 
@@ -101,10 +101,11 @@ public class AuthService  implements UserDetailsService {
 
         try {
             if (userRepository.findByPhoneNumber(loginDto.getPhoneNumber()).isEmpty())
-                return new ApiResponse("yoq token",false);
+                return new ApiResponse("user  not found",false);
                 Authentication authenticate = authenticationManager.
                     authenticate(new UsernamePasswordAuthenticationToken
-                    (loginDto.getPhoneNumber(), loginDto.getPassword()));
+                    (loginDto.getPhoneNumber(),loginDto.getPassword()));
+
             User user = (User) authenticate.getPrincipal();
             String token = jwtProvider.generateToken(loginDto.getPhoneNumber());
             return new ApiResponse("Mana token",true,token);

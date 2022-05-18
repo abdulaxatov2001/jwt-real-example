@@ -16,7 +16,6 @@ public class RegisterDto {
     @NotNull
     private  String phoneNumber;
 
-    private String username;
 
 
 }

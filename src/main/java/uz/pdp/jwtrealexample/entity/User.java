@@ -23,8 +23,6 @@ public class User implements UserDetails {
     private Integer id; //primary key
     @Column(unique = true,nullable = false)
     private String phoneNumber;//example@gmail.com
-
-    private String fullName;
     private String  generatePassword;
 
     @Column(nullable = false,updatable = false)

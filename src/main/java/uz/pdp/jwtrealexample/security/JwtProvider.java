@@ -12,12 +12,12 @@ import java.util.Set;
 public class JwtProvider {
 
     private final long expireTime = 1000 * 86400 * 30;
-    private final String secretKey = "heyMasterSuperKey";
+    private final String secretKey = "asssalomu";
 
-    public String generateToken(String username) {
+    public String generateToken(String phoneNumber) {
         String token = Jwts
                 .builder()
-                .setSubject(username)
+                .setSubject(phoneNumber)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expireTime))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
